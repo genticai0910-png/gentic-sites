@@ -30,7 +30,10 @@ const capabilityIcons = [
 
 export default function Capabilities() {
   return (
-    <section className="relative py-28 md:py-36">
+    <section className="relative py-28 md:py-36 overflow-hidden">
+      {/* Floating orb */}
+      <div className="absolute bottom-[10%] left-[8%] w-72 h-72 rounded-full bg-electric/4 blur-[100px] floating-orb pointer-events-none" />
+
       <div className="max-w-6xl mx-auto px-6">
         <ScrollReveal className="text-center mb-20">
           <p className="text-xs font-display font-700 uppercase tracking-[0.25em] text-electric mb-4">
@@ -44,9 +47,9 @@ export default function Capabilities() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
           {siteConfig.capabilities.map((cap, i) => (
             <ScrollReveal key={cap.title}>
-              <div className="group relative p-7 rounded-xl mesh-bg-card card-hover h-full">
+              <div className="group relative p-7 rounded-xl glass-card gradient-border h-full">
                 <div className="flex items-start gap-4">
-                  <div className="shrink-0 w-11 h-11 rounded-lg bg-electric/8 flex items-center justify-center text-electric/70 group-hover:text-electric group-hover:bg-electric/12 transition-all">
+                  <div className="shrink-0 w-11 h-11 rounded-lg bg-electric/8 flex items-center justify-center text-electric/70 group-hover:text-electric group-hover:bg-electric/12 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] transition-all duration-500">
                     {capabilityIcons[i]}
                   </div>
                   <div>

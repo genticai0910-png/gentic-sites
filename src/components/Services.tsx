@@ -23,7 +23,11 @@ const icons: Record<string, ReactNode> = {
 
 export default function Services() {
   return (
-    <section id="services" className="relative py-28 md:py-36">
+    <section id="services" className="relative py-28 md:py-36 overflow-hidden">
+      {/* Floating orbs */}
+      <div className="absolute top-[15%] left-[5%] w-72 h-72 rounded-full bg-electric/4 blur-[100px] floating-orb-delayed pointer-events-none" />
+      <div className="absolute bottom-[20%] right-[8%] w-56 h-56 rounded-full bg-blue-400/4 blur-[80px] floating-orb pointer-events-none" />
+
       <div className="max-w-6xl mx-auto px-6">
         <ScrollReveal className="text-center mb-20">
           <p className="text-xs font-display font-700 uppercase tracking-[0.25em] text-electric mb-4">
@@ -37,9 +41,9 @@ export default function Services() {
         <div className="grid md:grid-cols-3 gap-6 stagger-children">
           {siteConfig.services.map((service) => (
             <ScrollReveal key={service.title}>
-              <div className="group relative p-8 md:p-10 rounded-2xl mesh-bg-card card-hover h-full flex flex-col">
+              <div className="group relative p-8 md:p-10 rounded-2xl glass-card gradient-border shimmer h-full flex flex-col">
                 {/* Icon */}
-                <div className="w-14 h-14 rounded-xl bg-electric/10 flex items-center justify-center text-electric mb-6 group-hover:bg-electric/15 transition-colors">
+                <div className="w-14 h-14 rounded-xl bg-electric/10 flex items-center justify-center text-electric mb-6 group-hover:bg-electric/15 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-500">
                   {icons[service.icon]}
                 </div>
 
@@ -53,9 +57,9 @@ export default function Services() {
 
                 {/* Bottom accent */}
                 <div className="mt-8 pt-6 border-t border-black/5">
-                  <span className="text-sm font-display font-600 text-electric-glow group-hover:text-electric transition-colors flex items-center gap-2">
+                  <span className="text-sm font-display font-600 text-electric group-hover:text-electric-accent transition-colors flex items-center gap-2">
                     Learn more
-                    <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                   </span>

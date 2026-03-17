@@ -1,24 +1,43 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { siteConfig } from "@/lib/config";
 import ScrollReveal from "./ScrollReveal";
 
 export default function FinalCTA() {
   const { headline, subheadline, cta, ctaLink } = siteConfig.finalCta;
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.play().catch(() => {});
+  }, []);
 
   return (
-    <section className="section-dark relative py-28 md:py-36 overflow-hidden">
+    <section className="section-dark relative py-32 md:py-40 overflow-hidden">
       {/* Video background */}
       <div className="absolute inset-0 z-0">
         <video
-          className="absolute inset-0 w-full h-full object-cover"
+          ref={videoRef}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            videoLoaded ? "opacity-100" : "opacity-0"
+          }`}
           src="/videos/cta-bg-16x9.mp4"
           muted
           loop
           playsInline
-          autoPlay
           preload="metadata"
+          onLoadedData={() => setVideoLoaded(true)}
         />
+        <div className="absolute inset-0 mesh-bg" />
         <div className="absolute inset-0 cta-video-overlay" />
       </div>
+
+      {/* Floating orbs */}
+      <div className="absolute top-1/3 left-[15%] w-48 h-48 rounded-full bg-electric/10 blur-[80px] floating-orb pointer-events-none" />
+      <div className="absolute bottom-1/4 right-[15%] w-56 h-56 rounded-full bg-blue-400/10 blur-[90px] floating-orb-delayed pointer-events-none" />
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
         <ScrollReveal>

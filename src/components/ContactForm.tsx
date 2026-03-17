@@ -81,8 +81,14 @@ export default function ContactForm() {
     }
   }
 
+  const inputClasses =
+    "w-full px-4 py-3.5 rounded-xl bg-white/80 backdrop-blur-sm border border-slate-200 text-soft font-body placeholder:text-dim focus:outline-none focus:border-electric/40 focus:ring-2 focus:ring-electric/10 focus:bg-white transition-all duration-300";
+
   return (
-    <section id="contact" className="relative py-28 md:py-36 mesh-bg">
+    <section id="contact" className="relative py-28 md:py-36 mesh-bg overflow-hidden">
+      {/* Floating orbs */}
+      <div className="absolute top-[20%] right-[10%] w-64 h-64 rounded-full bg-electric/5 blur-[100px] floating-orb-delayed pointer-events-none" />
+
       <div className="max-w-3xl mx-auto px-6">
         <ScrollReveal className="text-center mb-16">
           <p className="text-xs font-display font-700 uppercase tracking-[0.25em] text-electric mb-4">
@@ -99,7 +105,7 @@ export default function ContactForm() {
         <ScrollReveal>
           <form
             onSubmit={handleSubmit}
-            className="relative p-8 md:p-12 rounded-2xl mesh-bg-card border border-slate-200 shadow-lg"
+            className="relative p-8 md:p-12 rounded-2xl glass-card"
           >
             <div className="space-y-6">
               {/* Name */}
@@ -112,7 +118,7 @@ export default function ContactForm() {
                   id="name"
                   name="name"
                   required
-                  className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-slate-200 text-soft font-body placeholder:text-dim focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all"
+                  className={inputClasses}
                   placeholder="Gabe Martinez"
                 />
               </div>
@@ -128,7 +134,7 @@ export default function ContactForm() {
                     id="email"
                     name="email"
                     required
-                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-slate-200 text-soft font-body placeholder:text-dim focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all"
+                    className={inputClasses}
                     placeholder="gabe@company.com"
                   />
                 </div>
@@ -141,7 +147,7 @@ export default function ContactForm() {
                     id="phone"
                     name="phone"
                     required
-                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-slate-200 text-soft font-body placeholder:text-dim focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all"
+                    className={inputClasses}
                     placeholder="(555) 123-4567"
                   />
                 </div>
@@ -157,7 +163,7 @@ export default function ContactForm() {
                     id="businessType"
                     name="businessType"
                     required
-                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-slate-200 text-soft font-body focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all appearance-none"
+                    className={`${inputClasses} appearance-none`}
                     defaultValue=""
                   >
                     <option value="" disabled className="text-dim">
@@ -178,7 +184,7 @@ export default function ContactForm() {
                     id="revenue"
                     name="revenue"
                     required
-                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-slate-200 text-soft font-body focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all appearance-none"
+                    className={`${inputClasses} appearance-none`}
                     defaultValue=""
                   >
                     <option value="" disabled className="text-dim">

@@ -53,24 +53,30 @@ const logos = [
 
 export default function LogoBar() {
   return (
-    <section className="relative py-16 border-t border-b border-black/5">
-      <ScrollReveal className="max-w-5xl mx-auto px-6">
-        <p className="text-center text-sm text-dim uppercase tracking-[0.2em] font-display font-500 mb-10">
+    <section className="relative py-16 border-t border-b border-black/5 overflow-hidden">
+      <ScrollReveal>
+        <p className="text-center text-sm text-dim uppercase tracking-[0.2em] font-display font-500 mb-10 px-6">
           Powered by the tools that power unicorns
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
-          {logos.map((logo, i) => (
-            <div
-              key={logo.name}
-              className="reveal flex items-center gap-2.5 text-dim/60 hover:text-electric-glow transition-colors duration-300"
-              style={{ transitionDelay: `${i * 0.07}s` }}
-            >
-              {logo.svg}
-              <span className="text-sm font-body font-500 tracking-wide">
-                {logo.name}
-              </span>
-            </div>
-          ))}
+        <div className="relative">
+          {/* Fade edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#FAFBFE] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#FAFBFE] to-transparent z-10 pointer-events-none" />
+
+          {/* Marquee track — logos duplicated for seamless loop */}
+          <div className="marquee-track">
+            {[...logos, ...logos].map((logo, i) => (
+              <div
+                key={`${logo.name}-${i}`}
+                className="flex items-center gap-2.5 text-dim/60 hover:text-electric transition-colors duration-300 mx-10 shrink-0"
+              >
+                {logo.svg}
+                <span className="text-sm font-body font-500 tracking-wide whitespace-nowrap">
+                  {logo.name}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </ScrollReveal>
     </section>
