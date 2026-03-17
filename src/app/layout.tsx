@@ -27,7 +27,7 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Gentic AI | AI Automation Systems for RE & Local Business",
   description:
-    "AI systems that scale your business — voice agents, lead scoring, and end-to-end automation pipelines. Book a free audit.",
+    "AI systems that scale your business. Voice agents, lead scoring, and full automation pipelines. Book a free audit.",
   metadataBase: new URL("https://genticai.pro"),
   openGraph: {
     title: "Gentic AI | AI Automation Systems",

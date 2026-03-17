@@ -6,7 +6,7 @@ export const siteConfig = {
   hero: {
     headline: "$57K MRR. 500+ Automations.\nZero Guesswork.",
     subheadline:
-      "I architect AI systems for businesses that want to scale — voice agents, lead scoring, and end-to-end pipelines that run while you sleep.",
+      "I architect AI systems for businesses that want to scale. Voice agents, lead scoring, and full pipelines that run while you sleep.",
     cta: "Book a Free Audit",
     ctaLink: "#contact",
     videoSrc: "/hero-video.mp4",
@@ -26,7 +26,7 @@ export const siteConfig = {
     headline: "Sound Familiar?",
     pain: "10 tools. Zero integration. Your team spends more time switching tabs than closing deals.",
     solution:
-      "One AI system. Everything connected. Leads flow in, get scored, get called — automatically.",
+      "One AI system. Everything connected. Leads flow in, get scored, get called. Automatically.",
     painTitle: "The Chaos",
     solutionTitle: "The Clarity",
   },
@@ -36,19 +36,19 @@ export const siteConfig = {
       icon: "voice",
       title: "AI Voice Agents",
       description:
-        "24/7 AI callers that qualify leads, book appointments, and follow up — using Bland AI and Twilio with natural conversation flow.",
+        "24/7 AI callers that qualify leads, book appointments, and follow up. Powered by Bland AI and Twilio with natural conversation flow.",
     },
     {
       icon: "score",
       title: "iRELOP Lead Scoring",
       description:
-        "100-point proprietary scoring system that ranks every lead by Motivation, Opportunity, and Profile — so you only chase deals worth closing.",
+        "100-point proprietary scoring system that ranks every lead by Motivation, Opportunity, and Profile. You only chase deals worth closing.",
     },
     {
       icon: "pipeline",
-      title: "End-to-End Pipelines",
+      title: "Full Pipeline Automation",
       description:
-        "From first touch to closed deal — automated workflows that route, nurture, and convert without manual intervention.",
+        "From first touch to closed deal. Automated workflows that route, nurture, and convert without manual intervention.",
     },
   ],
 
@@ -57,26 +57,26 @@ export const siteConfig = {
       step: 1,
       title: "Audit",
       description:
-        "We map every revenue bottleneck in your operation — where leads leak, where time burns, where money sleeps.",
+        "We map every revenue bottleneck in your operation. Where leads leak, where time burns, where money sleeps.",
     },
     {
       step: 2,
       title: "Build",
       description:
-        "Custom AI systems deployed in under 2 weeks — voice agents, scoring, pipelines — all wired into your existing stack.",
+        "Custom AI systems deployed in under 2 weeks. Voice agents, scoring, pipelines. All wired into your existing stack.",
     },
     {
       step: 3,
       title: "Scale",
       description:
-        "Ongoing optimization, monitoring, and expansion. Your AI systems compound — more data, better decisions, higher ROI.",
+        "Ongoing optimization, monitoring, and expansion. Your AI systems compound. More data, better decisions, higher ROI.",
     },
   ],
 
   capabilities: [
     {
       title: "Inbound Lead Qualification",
-      description: "AI answers, qualifies, and routes every inbound lead — day or night.",
+      description: "AI answers, qualifies, and routes every inbound lead. Day or night.",
     },
     {
       title: "Outbound Voice Campaigns",
@@ -92,7 +92,7 @@ export const siteConfig = {
     },
     {
       title: "Real-Time Lead Scoring",
-      description: "Every lead scored instantly — hot leads get calls, warm leads get nurture.",
+      description: "Every lead scored instantly. Hot leads get calls, warm leads get nurture.",
     },
     {
       title: "Multi-Channel Follow-Up",
