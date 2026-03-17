@@ -2,7 +2,7 @@ import { siteConfig } from "@/lib/config";
 
 export default function Footer() {
   return (
-    <footer className="relative py-12 border-t border-white/5">
+    <footer className="relative py-12 border-t border-black/5">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}

@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
-/* ── Design Tokens ─────────────────────────────── */
+/* ── Design Tokens (Light Theme) ─────────────── */
 :root {
-  --navy-deep: #080E1E;
-  --navy: #0C1425;
-  --navy-light: #131D35;
-  --navy-card: #111B30;
+  --navy-deep: #FAFBFE;
+  --navy: #F1F5F9;
+  --navy-light: #F8FAFC;
+  --navy-card: #FFFFFF;
   --blue-electric: #3B82F6;
-  --blue-glow: #60A5FA;
-  --blue-accent: #2563EB;
-  --white-soft: #F0F4FC;
-  --white-muted: #94A3B8;
+  --blue-glow: #2563EB;
+  --blue-accent: #1D4ED8;
+  --white-soft: #0F172A;
+  --white-muted: #334155;
   --white-dim: #64748B;
-  --grain-opacity: 0.03;
+  --grain-opacity: 0.015;
 }
 
 @theme inline {
@@ -65,6 +65,31 @@ body::before {
   color: white;
 }
 
+/* ── Dark sections (Hero, CTA, Footer) ─────────── */
+.section-dark {
+  --navy-deep: #080E1E;
+  --navy: #0C1425;
+  --navy-card: #111B30;
+  --white-soft: #F0F4FC;
+  --white-muted: #94A3B8;
+  --white-dim: #64748B;
+  --blue-glow: #60A5FA;
+  --color-soft: #F0F4FC;
+  --color-muted: #94A3B8;
+  --color-dim: #64748B;
+  --color-electric-glow: #60A5FA;
+  --color-navy-card: #111B30;
+  --color-background: #080E1E;
+  color: #F0F4FC;
+}
+
+.section-dark .text-gradient {
+  background: linear-gradient(135deg, #F0F4FC 0%, #60A5FA 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 /* ── Scroll reveal animations ──────────────────── */
 .reveal {
   opacity: 0;
@@ -74,6 +99,12 @@ body::before {
 }
 
 .reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Cascade reveal to children with .reveal class (logo stagger fix) */
+.reveal.revealed .reveal {
   opacity: 1;
   transform: translateY(0);
 }
@@ -94,18 +125,18 @@ body::before {
 
 /* ── Glow effect ───────────────────────────────── */
 .glow-blue {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.15),
-              0 0 60px rgba(59, 130, 246, 0.05);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.08),
+              0 0 60px rgba(59, 130, 246, 0.03);
 }
 
 .glow-blue-hover:hover {
-  box-shadow: 0 0 30px rgba(59, 130, 246, 0.25),
-              0 0 80px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.15),
+              0 0 80px rgba(59, 130, 246, 0.06);
 }
 
 /* ── Gradient text ─────────────────────────────── */
 .text-gradient {
-  background: linear-gradient(135deg, var(--white-soft) 0%, var(--blue-glow) 100%);
+  background: linear-gradient(135deg, var(--blue-electric) 0%, var(--blue-accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -114,14 +145,14 @@ body::before {
 /* ── Mesh gradient backgrounds ─────────────────── */
 .mesh-bg {
   background:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(37, 99, 235, 0.03) 0%, transparent 50%),
     var(--navy-deep);
 }
 
 .mesh-bg-card {
   background:
-    radial-gradient(ellipse 100% 100% at 0% 0%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 100% at 0% 0%, rgba(59, 130, 246, 0.03) 0%, transparent 60%),
     var(--navy-card);
 }
 
@@ -166,20 +197,21 @@ body::before {
 .divider-glow {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--blue-electric), transparent);
-  opacity: 0.2;
+  opacity: 0.15;
 }
 
 /* ── Card hover ────────────────────────────────── */
 .card-hover {
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .card-hover:hover {
   transform: translateY(-4px);
-  border-color: rgba(59, 130, 246, 0.2);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
-              0 0 40px rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.25);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.08),
+              0 8px 16px rgba(0, 0, 0, 0.04);
 }
 
 /* ── Number counter ────────────────────────────── */
@@ -188,7 +220,7 @@ body::before {
   font-size: 4rem;
   font-weight: 800;
   line-height: 1;
-  background: linear-gradient(180deg, var(--blue-electric) 0%, rgba(59, 130, 246, 0.2) 100%);
+  background: linear-gradient(180deg, var(--blue-electric) 0%, rgba(59, 130, 246, 0.3) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -198,10 +230,21 @@ body::before {
 .hero-video-overlay {
   background: linear-gradient(
     180deg,
-    rgba(8, 14, 30, 0.3) 0%,
-    rgba(8, 14, 30, 0.6) 40%,
-    rgba(8, 14, 30, 0.92) 80%,
-    var(--navy-deep) 100%
+    rgba(8, 14, 30, 0.4) 0%,
+    rgba(8, 14, 30, 0.65) 40%,
+    rgba(250, 251, 254, 0.85) 75%,
+    #FAFBFE 100%
+  );
+}
+
+/* ── CTA video overlay ───────────────────────── */
+.cta-video-overlay {
+  background: linear-gradient(
+    180deg,
+    #080E1E 0%,
+    rgba(8, 14, 30, 0.8) 25%,
+    rgba(8, 14, 30, 0.7) 75%,
+    #080E1E 100%
   );
 }
 
@@ -211,14 +254,23 @@ body::before {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--navy-deep);
+  background: var(--navy);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--navy-light);
+  background: #CBD5E1;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--blue-electric);
+}
+
+/* ── Reduced motion ──────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

@@ -99,7 +99,7 @@ export default function ContactForm() {
         <ScrollReveal>
           <form
             onSubmit={handleSubmit}
-            className="relative p-8 md:p-12 rounded-2xl mesh-bg-card border border-electric/10 glow-blue"
+            className="relative p-8 md:p-12 rounded-2xl mesh-bg-card border border-slate-200 shadow-lg"
           >
             <div className="space-y-6">
               {/* Name */}
@@ -112,7 +112,7 @@ export default function ContactForm() {
                   id="name"
                   name="name"
                   required
-                  className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-white/10 text-soft font-body placeholder:text-dim focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all"
+                  className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-slate-200 text-soft font-body placeholder:text-dim focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all"
                   placeholder="Gabe Martinez"
                 />
               </div>
@@ -128,7 +128,7 @@ export default function ContactForm() {
                     id="email"
                     name="email"
                     required
-                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-white/10 text-soft font-body placeholder:text-dim focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all"
+                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-slate-200 text-soft font-body placeholder:text-dim focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all"
                     placeholder="gabe@company.com"
                   />
                 </div>
@@ -141,7 +141,7 @@ export default function ContactForm() {
                     id="phone"
                     name="phone"
                     required
-                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-white/10 text-soft font-body placeholder:text-dim focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all"
+                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-slate-200 text-soft font-body placeholder:text-dim focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all"
                     placeholder="(555) 123-4567"
                   />
                 </div>
@@ -157,7 +157,7 @@ export default function ContactForm() {
                     id="businessType"
                     name="businessType"
                     required
-                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-white/10 text-soft font-body focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all appearance-none"
+                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-slate-200 text-soft font-body focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all appearance-none"
                     defaultValue=""
                   >
                     <option value="" disabled className="text-dim">
@@ -178,7 +178,7 @@ export default function ContactForm() {
                     id="revenue"
                     name="revenue"
                     required
-                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-white/10 text-soft font-body focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all appearance-none"
+                    className="w-full px-4 py-3.5 rounded-lg bg-navy-light border border-slate-200 text-soft font-body focus:outline-none focus:border-electric/40 focus:ring-1 focus:ring-electric/20 transition-all appearance-none"
                     defaultValue=""
                   >
                     <option value="" disabled className="text-dim">

@@ -19,12 +19,12 @@ export default function ProblemSolution() {
         <div className="grid md:grid-cols-2 gap-6 md:gap-8">
           {/* Pain */}
           <ScrollReveal delay={1}>
-            <div className="relative p-8 md:p-10 rounded-2xl bg-red-500/[0.03] border border-red-500/10 h-full">
-              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-red-500/5 blur-[60px]" />
+            <div className="relative p-8 md:p-10 rounded-2xl bg-red-50 border border-red-200 h-full">
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-red-200/50 blur-[60px]" />
               <div className="relative">
                 <div className="inline-flex items-center gap-2 mb-6">
-                  <div className="w-3 h-3 rounded-full bg-red-400/60" />
-                  <span className="text-xs font-display font-700 uppercase tracking-[0.2em] text-red-400/80">
+                  <div className="w-3 h-3 rounded-full bg-red-400" />
+                  <span className="text-xs font-display font-700 uppercase tracking-[0.2em] text-red-600">
                     {painTitle}
                   </span>
                 </div>
@@ -37,12 +37,12 @@ export default function ProblemSolution() {
 
           {/* Solution */}
           <ScrollReveal delay={2}>
-            <div className="relative p-8 md:p-10 rounded-2xl mesh-bg-card border border-electric/10 h-full glow-blue">
-              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-electric/8 blur-[60px]" />
+            <div className="relative p-8 md:p-10 rounded-2xl bg-blue-50 border border-blue-200 h-full">
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-blue-200/50 blur-[60px]" />
               <div className="relative">
                 <div className="inline-flex items-center gap-2 mb-6">
                   <div className="w-3 h-3 rounded-full bg-electric" />
-                  <span className="text-xs font-display font-700 uppercase tracking-[0.2em] text-electric-glow">
+                  <span className="text-xs font-display font-700 uppercase tracking-[0.2em] text-electric">
                     {solutionTitle}
                   </span>
                 </div>

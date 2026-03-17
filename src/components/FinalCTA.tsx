@@ -5,13 +5,22 @@ export default function FinalCTA() {
   const { headline, subheadline, cta, ctaLink } = siteConfig.finalCta;
 
   return (
-    <section className="relative py-28 md:py-36 overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-electric/8 blur-[150px]" />
+    <section className="section-dark relative py-28 md:py-36 overflow-hidden">
+      {/* Video background */}
+      <div className="absolute inset-0 z-0">
+        <video
+          className="absolute inset-0 w-full h-full object-cover"
+          src="/videos/cta-bg-16x9.mp4"
+          muted
+          loop
+          playsInline
+          autoPlay
+          preload="metadata"
+        />
+        <div className="absolute inset-0 cta-video-overlay" />
       </div>
 
-      <div className="relative max-w-4xl mx-auto px-6 text-center">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
         <ScrollReveal>
           <h2 className="font-display font-800 text-4xl md:text-5xl lg:text-6xl tracking-tight text-soft mb-6">
             {headline}
@@ -43,9 +52,6 @@ export default function FinalCTA() {
           </a>
         </ScrollReveal>
       </div>
-
-      {/* Bottom divider */}
-      <div className="absolute bottom-0 left-0 right-0 divider-glow" />
     </section>
   );
 }

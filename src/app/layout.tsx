@@ -53,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
         className={`${syne.variable} ${jakarta.variable} ${jetbrains.variable} antialiased`}
       >

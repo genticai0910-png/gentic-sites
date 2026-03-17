@@ -53,7 +53,7 @@ const logos = [
 
 export default function LogoBar() {
   return (
-    <section className="relative py-16 border-t border-b border-white/5">
+    <section className="relative py-16 border-t border-b border-black/5">
       <ScrollReveal className="max-w-5xl mx-auto px-6">
         <p className="text-center text-sm text-dim uppercase tracking-[0.2em] font-display font-500 mb-10">
           Powered by the tools that power unicorns

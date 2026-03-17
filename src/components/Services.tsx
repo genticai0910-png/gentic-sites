@@ -52,7 +52,7 @@ export default function Services() {
                 </p>
 
                 {/* Bottom accent */}
-                <div className="mt-8 pt-6 border-t border-white/5">
+                <div className="mt-8 pt-6 border-t border-black/5">
                   <span className="text-sm font-display font-600 text-electric-glow group-hover:text-electric transition-colors flex items-center gap-2">
                     Learn more
                     <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

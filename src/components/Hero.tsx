@@ -16,7 +16,7 @@ export default function Hero() {
   const { headline, subheadline, cta, ctaLink } = siteConfig.hero;
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="section-dark relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Video background */}
       <div className="absolute inset-0 z-0">
         <video
