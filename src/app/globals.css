@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+/* ── Design Tokens ─────────────────────────────── */
+:root {
+  --navy-deep: #080E1E;
+  --navy: #0C1425;
+  --navy-light: #131D35;
+  --navy-card: #111B30;
+  --blue-electric: #3B82F6;
+  --blue-glow: #60A5FA;
+  --blue-accent: #2563EB;
+  --white-soft: #F0F4FC;
+  --white-muted: #94A3B8;
+  --white-dim: #64748B;
+  --grain-opacity: 0.03;
+}
+
+@theme inline {
+  --color-background: var(--navy-deep);
+  --color-foreground: var(--white-soft);
+  --color-navy: var(--navy);
+  --color-navy-light: var(--navy-light);
+  --color-navy-card: var(--navy-card);
+  --color-electric: var(--blue-electric);
+  --color-electric-glow: var(--blue-glow);
+  --color-electric-accent: var(--blue-accent);
+  --color-soft: var(--white-soft);
+  --color-muted: var(--white-muted);
+  --color-dim: var(--white-dim);
+  --font-display: var(--font-syne);
+  --font-body: var(--font-jakarta);
+  --font-mono: var(--font-jetbrains);
+}
+
+/* ── Base ───────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--navy-deep);
+  color: var(--white-soft);
+  font-family: var(--font-body), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── Grain overlay ─────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* ── Selection ─────────────────────────────────── */
+::selection {
+  background: var(--blue-electric);
+  color: white;
+}
+
+/* ── Scroll reveal animations ──────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* ── Stagger children ─────────────────────────── */
+.stagger-children > .reveal:nth-child(1) { transition-delay: 0.05s; }
+.stagger-children > .reveal:nth-child(2) { transition-delay: 0.12s; }
+.stagger-children > .reveal:nth-child(3) { transition-delay: 0.19s; }
+.stagger-children > .reveal:nth-child(4) { transition-delay: 0.26s; }
+.stagger-children > .reveal:nth-child(5) { transition-delay: 0.33s; }
+.stagger-children > .reveal:nth-child(6) { transition-delay: 0.40s; }
+
+/* ── Glow effect ───────────────────────────────── */
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.15),
+              0 0 60px rgba(59, 130, 246, 0.05);
+}
+
+.glow-blue-hover:hover {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.25),
+              0 0 80px rgba(59, 130, 246, 0.1);
+}
+
+/* ── Gradient text ─────────────────────────────── */
+.text-gradient {
+  background: linear-gradient(135deg, var(--white-soft) 0%, var(--blue-glow) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Mesh gradient backgrounds ─────────────────── */
+.mesh-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+    var(--navy-deep);
+}
+
+.mesh-bg-card {
+  background:
+    radial-gradient(ellipse 100% 100% at 0% 0%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
+    var(--navy-card);
+}
+
+/* ── Button styles ─────────────────────────────── */
+.btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2.5rem;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.025em;
+  color: white;
+  background: var(--blue-electric);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.35),
+              0 0 60px rgba(59, 130, 246, 0.15);
+}
+
+.btn-primary:hover::before {
+  opacity: 1;
+}
+
+/* ── Divider ───────────────────────────────────── */
+.divider-glow {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blue-electric), transparent);
+  opacity: 0.2;
+}
+
+/* ── Card hover ────────────────────────────────── */
+.card-hover {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(59, 130, 246, 0.08);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+              0 0 40px rgba(59, 130, 246, 0.08);
+}
+
+/* ── Number counter ────────────────────────────── */
+.step-number {
+  font-family: var(--font-mono), monospace;
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(180deg, var(--blue-electric) 0%, rgba(59, 130, 246, 0.2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Hero video ────────────────────────────────── */
+.hero-video-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 14, 30, 0.3) 0%,
+    rgba(8, 14, 30, 0.6) 40%,
+    rgba(8, 14, 30, 0.92) 80%,
+    var(--navy-deep) 100%
+  );
+}
+
+/* ── Custom scrollbar ──────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--navy-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--navy-light);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--blue-electric);
+}
