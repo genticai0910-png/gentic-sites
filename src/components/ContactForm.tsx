@@ -86,12 +86,15 @@ export default function ContactForm() {
 
   return (
     <section id="contact" className="relative py-28 md:py-36 mesh-bg overflow-hidden">
+      {/* Dot grid background */}
+      <div className="dot-grid" />
+
       {/* Floating orbs */}
       <div className="absolute top-[20%] right-[10%] w-64 h-64 rounded-full bg-electric/5 blur-[100px] floating-orb-delayed pointer-events-none" />
 
       <div className="max-w-3xl mx-auto px-6">
         <ScrollReveal className="text-center mb-16">
-          <p className="text-xs font-display font-700 uppercase tracking-[0.25em] text-electric mb-4">
+          <p className="text-xs font-display font-700 uppercase tracking-[0.25em] text-electric mb-4 eyebrow-pulse">
             Get Started
           </p>
           <h2 className="font-display font-800 text-4xl md:text-5xl tracking-tight text-soft mb-4">

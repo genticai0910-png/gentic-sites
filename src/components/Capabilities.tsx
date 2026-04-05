@@ -31,12 +31,15 @@ const capabilityIcons = [
 export default function Capabilities() {
   return (
     <section className="relative py-28 md:py-36 overflow-hidden">
+      {/* Dot grid background */}
+      <div className="dot-grid" />
+
       {/* Floating orb */}
       <div className="absolute bottom-[10%] left-[8%] w-72 h-72 rounded-full bg-electric/4 blur-[100px] floating-orb pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-6">
         <ScrollReveal className="text-center mb-20">
-          <p className="text-xs font-display font-700 uppercase tracking-[0.25em] text-electric mb-4">
+          <p className="text-xs font-display font-700 uppercase tracking-[0.25em] text-electric mb-4 eyebrow-pulse">
             Capabilities
           </p>
           <h2 className="font-display font-800 text-4xl md:text-5xl lg:text-6xl tracking-tight text-soft">

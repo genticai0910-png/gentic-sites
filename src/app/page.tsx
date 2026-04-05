@@ -7,10 +7,12 @@ import Capabilities from "@/components/Capabilities";
 import FinalCTA from "@/components/FinalCTA";
 import ContactForm from "@/components/ContactForm";
 import Footer from "@/components/Footer";
+import ScrollProgress from "@/components/ScrollProgress";
 
 export default function Home() {
   return (
     <main>
+      <ScrollProgress />
       <Hero />
       <LogoBar />
       <ProblemSolution />

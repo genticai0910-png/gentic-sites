@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { siteConfig } from "@/lib/config";
 import ScrollReveal from "./ScrollReveal";
+import ParticleCanvas from "./ParticleCanvas";
 
 export default function ProblemSolution() {
   const { headline, pain, solution, painTitle, solutionTitle } = siteConfig.problem;
@@ -34,6 +35,10 @@ export default function ProblemSolution() {
         <div className="absolute inset-0 mesh-bg" />
         <div className="absolute inset-0 problem-video-overlay" />
       </div>
+
+      {/* Aurora + Particles */}
+      <div className="aurora-bg z-[1]" />
+      <ParticleCanvas className="z-[2]" particleCount={30} speed={0.2} color="96,165,250" />
 
       {/* Floating orbs */}
       <div className="absolute top-1/4 left-[10%] w-64 h-64 rounded-full bg-red-500/10 blur-[100px] floating-orb pointer-events-none" />

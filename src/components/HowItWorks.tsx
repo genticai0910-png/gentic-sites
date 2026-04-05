@@ -16,15 +16,18 @@ export default function HowItWorks() {
 
   return (
     <section id="how-it-works" className="relative py-28 md:py-36 mesh-bg overflow-hidden">
-      {/* Decorative vertical line */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-electric/10 to-transparent" />
+      {/* Dot grid background */}
+      <div className="dot-grid" />
+
+      {/* Decorative vertical line with traveling glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-electric/10 to-transparent glow-line" />
 
       {/* Floating orb */}
       <div className="absolute top-1/3 right-[5%] w-80 h-80 rounded-full bg-electric/5 blur-[120px] floating-orb pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-6">
         <ScrollReveal className="text-center mb-16">
-          <p className="text-xs font-display font-700 uppercase tracking-[0.25em] text-electric mb-4">
+          <p className="text-xs font-display font-700 uppercase tracking-[0.25em] text-electric mb-4 eyebrow-pulse">
             The Process
           </p>
           <h2 className="font-display font-800 text-4xl md:text-5xl lg:text-6xl tracking-tight text-soft">

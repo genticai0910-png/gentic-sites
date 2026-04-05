@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { siteConfig } from "@/lib/config";
 import ScrollReveal from "./ScrollReveal";
+import ParticleCanvas from "./ParticleCanvas";
 
 export default function FinalCTA() {
   const { headline, subheadline, cta, ctaLink } = siteConfig.finalCta;
@@ -34,6 +35,10 @@ export default function FinalCTA() {
         <div className="absolute inset-0 mesh-bg" />
         <div className="absolute inset-0 cta-video-overlay" />
       </div>
+
+      {/* Aurora + Particles */}
+      <div className="aurora-bg z-[1]" />
+      <ParticleCanvas className="z-[2]" particleCount={35} speed={0.2} color="96,165,250" />
 
       {/* Floating orbs */}
       <div className="absolute top-1/3 left-[15%] w-48 h-48 rounded-full bg-electric/10 blur-[80px] floating-orb pointer-events-none" />

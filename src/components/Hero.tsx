@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { siteConfig } from "@/lib/config";
+import ParticleCanvas from "./ParticleCanvas";
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -37,6 +38,10 @@ export default function Hero() {
         {/* Overlay gradient */}
         <div className="absolute inset-0 hero-video-overlay" />
       </div>
+
+      {/* Aurora + Particle background */}
+      <div className="aurora-bg z-[1]" />
+      <ParticleCanvas className="z-[2]" particleCount={50} speed={0.25} connectDistance={140} />
 
       {/* Decorative elements */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-electric/5 blur-[120px] pointer-events-none" />

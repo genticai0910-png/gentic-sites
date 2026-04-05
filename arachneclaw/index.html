@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArachneClaw — Governed AI Agent Sandbox</title>
+  <meta name="description" content="Your open source AI agent is a liability without guardrails. ArachneClaw gives you sandboxed execution, token circuit breakers, and kill switches for $50/mo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       COLOR TOKENS & RESET
+    ======================================== */
+    :root {
+      --accent: #00E5A0;
+      --accent-dim: rgba(0,229,160,0.15);
+      --danger: #FF4444;
+      --danger-dim: rgba(255,68,68,0.15);
+      --warning: #FFB020;
+      --bg-void: #07080A;
+      --bg-surface: #0D0F12;
+      --bg-card: #111318;
+      --text-primary: #F0F0F0;
+      --text-secondary: #8A8F98;
+      --border: rgba(255,255,255,0.06);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-void);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ========================================
+       GRID BACKGROUND + NOISE TEXTURE
+    ======================================== */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ========================================
+       AMBIENT LIGHT ORBS
+    ======================================== */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb-1 {
+      top: 20%; left: 10%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(0,229,160,0.08), transparent 70%);
+      filter: blur(40px);
+      animation: orbDrift1 8s ease-in-out infinite;
+    }
+
+    .orb-2 {
+      bottom: 20%; right: 10%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,229,160,0.05), transparent 70%);
+      filter: blur(60px);
+      animation: orbDrift2 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes orbDrift1 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(30px, -20px); }
+    }
+
+    @keyframes orbDrift2 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-25px, 15px); }
+    }
+
+    /* ========================================
+       LAYOUT
+    ======================================== */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    section { padding: 100px 0; }
+
+    /* ========================================
+       NAV
+    ======================================== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 16px 24px;
+      background: rgba(7,8,10,0.8);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo span { font-size: 1.4rem; }
+
+    .beta-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    /* ========================================
+       BUTTONS
+    ======================================== */
+    .btn {
+      display: inline-block;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 14px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-void);
+    }
+
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+    /* Button shine sweep */
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      transition: none;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+      transition: left 0.5s ease;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn-sub {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      display: block;
+    }
+
+    /* ========================================
+       HERO
+    ======================================== */
+    .hero {
+      padding-top: 160px;
+      padding-bottom: 80px;
+      text-align: center;
+    }
+
+    .danger-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 8px 20px;
+      border-radius: 30px;
+      background: var(--danger-dim);
+      color: var(--danger);
+      border: 1px solid rgba(255,68,68,0.2);
+      margin-bottom: 32px;
+      animation: dangerPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes dangerPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(255,68,68,0.1); }
+      50% { box-shadow: 0 0 40px rgba(255,68,68,0.25); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 800;
+      line-height: 1.15;
+      max-width: 780px;
+      margin: 0 auto 24px;
+    }
+
+    .hero h1 strong {
+      background: linear-gradient(135deg, var(--accent), #00B87A);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 800;
+    }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .hero-cta { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+    /* ========================================
+       HERO STATS COUNTER
+    ======================================== */
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      max-width: 600px;
+      margin: 56px auto 0;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg-surface);
+    }
+
+    .stat-item {
+      padding: 24px 16px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+
+    /* ========================================
+       TERMINAL BLOCK
+    ======================================== */
+    .terminal-section { padding: 40px 0 80px; }
+
+    .terminal {
+      background: #0A0C0F;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .terminal-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+    }
+
+    .terminal-dot.red { background: #FF5F57; }
+    .terminal-dot.yellow { background: #FFBD2E; }
+    .terminal-dot.green { background: #28C840; }
+
+    .terminal-body {
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.8;
+    }
+
+    .terminal-line {
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .terminal-line.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .terminal-line.error-flash {
+      animation: errorFlash 0.4s ease;
+    }
+
+    @keyframes errorFlash {
+      0%, 100% { text-shadow: none; }
+      50% { text-shadow: 0 0 12px rgba(255,68,68,0.6); }
+    }
+
+    .t-prompt { color: var(--accent); }
+    .t-cmd { color: var(--text-primary); }
+    .t-warn { color: var(--warning); }
+    .t-err { color: var(--danger); }
+    .t-dim { color: var(--text-secondary); }
+
+    /* ========================================
+       SECTION TITLES
+    ======================================== */
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .section-label.danger { color: var(--danger); }
+
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 700;
+      margin-bottom: 48px;
+    }
+
+    /* ========================================
+       CARDS (SHARED)
+    ======================================== */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 24px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card:hover { transform: translateY(-8px) rotateX(2deg) rotateY(-2deg); }
+
+    .card-icon {
+      font-size: 1.6rem;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Pain cards — red accent */
+    .pain-card:hover {
+      border-color: rgba(255,68,68,0.2);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 40px rgba(255,68,68,0.1);
+    }
+
+    .pain-card .card-icon { color: var(--danger); }
+
+    /* Solution cards — green accent + gradient border reveal */
+    .solution-card { overflow: hidden; }
+
+    .solution-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(0,229,160,0.6), transparent 50%, rgba(0,229,160,0.6));
+      border-radius: inherit;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .solution-card:hover::after { opacity: 1; }
+
+    .solution-card:hover {
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 40px rgba(0,229,160,0.1);
+    }
+
+    .solution-card .card-icon { color: var(--accent); }
+
+    /* ========================================
+       PRICING
+    ======================================== */
+    .pricing-section { text-align: center; }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+      align-items: stretch;
+    }
+
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 36px 28px;
+      text-align: left;
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0,229,160,0.2);
+    }
+
+    .pricing-card.featured {
+      border-color: rgba(0,229,160,0.3);
+      animation: pricePulse 3s ease-in-out infinite;
+      transform: scale(1.03);
+    }
+
+    .pricing-card.featured:hover { transform: scale(1.03) translateY(-4px); }
+
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--bg-void);
+      background: var(--accent);
+      padding: 4px 14px;
+      border-radius: 100px;
+    }
+
+    .pricing-tier {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    @keyframes pricePulse {
+      0%, 100% { box-shadow: 0 0 40px rgba(0,229,160,0.08); }
+      50% { box-shadow: 0 0 80px rgba(0,229,160,0.18); }
+    }
+
+    .pricing-price {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .pricing-card.featured .pricing-price { color: var(--accent); }
+
+    .pricing-price span {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+    }
+
+    .pricing-deposit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin: 6px 0 24px;
+    }
+
+    .pricing-features {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 36px;
+    }
+
+    .pricing-features li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pricing-features li::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ========================================
+       FAQ
+    ======================================== */
+    .faq-list { max-width: 700px; margin: 0 auto; }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 24px 0;
+    }
+
+    .faq-q {
+      font-weight: 600;
+      font-size: 1.05rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .faq-q::after {
+      content: '+';
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      color: var(--accent);
+      transition: transform 0.3s ease;
+    }
+
+    .faq-item.open .faq-q::after { transform: rotate(45deg); }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding-top: 14px;
+    }
+
+    /* ========================================
+       FINAL CTA
+    ======================================== */
+    .final-cta {
+      text-align: center;
+      padding: 80px 0 120px;
+    }
+
+    .final-cta h2 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 700;
+      margin-bottom: 32px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ========================================
+       FOOTER
+    ======================================== */
+    footer {
+      text-align: center;
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========================================
+       SCROLL REVEAL
+    ======================================== */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* stagger children */
+    .fade-up.delay-1 { transition-delay: 0.1s; }
+    .fade-up.delay-2 { transition-delay: 0.2s; }
+    .fade-up.delay-3 { transition-delay: 0.3s; }
+    .fade-up.delay-4 { transition-delay: 0.4s; }
+    .fade-up.delay-5 { transition-delay: 0.5s; }
+    .fade-up.delay-6 { transition-delay: 0.6s; }
+
+    /* ========================================
+       CUSTOM CURSOR (desktop only, applied via JS)
+    ======================================== */
+    .cursor-ring {
+      position: fixed;
+      width: 28px; height: 28px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      box-shadow: 0 0 12px rgba(0,229,160,0.3);
+      transition: width 0.25s ease, height 0.25s ease, border-width 0.25s ease;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
+
+    .cursor-ring.hover {
+      width: 44px; height: 44px;
+      border-width: 2px;
+    }
+
+    .cursor-ring.click {
+      transform: translate(-50%, -50%) scale(0.88);
+    }
+
+    .cursor-dot {
+      position: fixed;
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
+
+    .cursor-trail {
+      position: fixed;
+      width: 4px; height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
+
+    /* ========================================
+       RESPONSIVE
+    ======================================== */
+    @media (max-width: 768px) {
+      .hero-stats { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .card-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+      .pricing-card.featured { transform: none; }
+      .pricing-card.featured:hover { transform: translateY(-4px); }
+      .pricing-card { padding: 32px 24px; }
+      section { padding: 60px 0; }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.8rem; }
+      .pricing-price { font-size: 2.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Light Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <!-- Spider Web Canvas -->
+  <canvas id="spiderWebCanvas" style="position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+
+  <!-- Custom Cursor Elements -->
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div id="cursorTrails"></div>
+
+  <!-- ====== NAV ====== -->
+  <nav>
+    <div class="nav-inner">
+      <div class="logo">
+        <span>&#128375;</span> ArachneClaw
+      </div>
+      <div class="beta-tag">BETA &mdash; April 2026</div>
+    </div>
+  </nav>
+
+  <!-- ====== HERO ====== -->
+  <section class="hero">
+    <div class="container">
+      <div class="danger-badge">YOUR AGENT IS RUNNING UNSUPERVISED RIGHT NOW</div>
+      <h1>Your open source AI agent is a <strong>liability without guardrails.</strong></h1>
+      <p class="hero-sub">You bought the hardware. You installed the framework. Nobody told you day one is where agents loop, leak tokens, and burn money while you sleep.</p>
+      <div class="hero-cta">
+        <a href="https://buy.stripe.com/cNibJ377agMneal6b15os00" class="btn btn-primary">Start for $50/month &rarr;</a>
+        <span class="btn-sub">6 governed agents &middot; No setup &middot; Kill switch included</span>
+      </div>
+
+      <!-- Stats Counter -->
+      <div class="hero-stats fade-up">
+        <div class="stat-item">
+          <span class="stat-number" data-target="47" data-prefix="$">$0</span>
+          <div class="stat-label">Avg mistake cost</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-target="0">0</span>
+          <div class="stat-label">Setup time</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-target="6">0</span>
+          <div class="stat-label">Agents included</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-target="30" data-suffix="s">0s</span>
+          <div class="stat-label">Kill switch speed</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== TERMINAL ====== -->
+  <section class="terminal-section">
+    <div class="container">
+      <div class="terminal fade-up" id="terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dot red"></div>
+          <div class="terminal-dot yellow"></div>
+          <div class="terminal-dot green"></div>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-line"><span class="t-prompt">$</span> <span class="t-cmd">agent start --task "research competitors"</span></div>
+          <div class="terminal-line"><span class="t-dim">[00:01]</span> Agent spawned. Model: gpt-4o</div>
+          <div class="terminal-line"><span class="t-dim">[00:03]</span> Browsing... 14 tabs opened</div>
+          <div class="terminal-line"><span class="t-warn">[00:07] WARNING: Token usage 12,400 — no budget set</span></div>
+          <div class="terminal-line"><span class="t-dim">[00:12]</span> Agent spawned sub-agent &rarr; "deep research"</div>
+          <div class="terminal-line"><span class="t-warn">[00:18] WARNING: Sub-agent spawned sub-agent</span></div>
+          <div class="terminal-line"><span class="t-err">[00:24] ERROR: Token usage 847,000 — rate limit hit</span></div>
+          <div class="terminal-line"><span class="t-err">[00:25] ERROR: Webhook exposed on 0.0.0.0:3000</span></div>
+          <div class="terminal-line"><span class="t-err">[00:25] FATAL: API key leaked in agent log output</span></div>
+          <div class="terminal-line"><span class="t-dim">[00:26]</span> <span class="t-err">You owe $142.67. You were asleep.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== PAIN POINTS ====== -->
+  <section>
+    <div class="container">
+      <div class="section-label danger fade-up">The problem</div>
+      <h2 class="section-title fade-up">What happens without governance</h2>
+      <div class="card-grid">
+        <div class="card pain-card fade-up delay-1">
+          <span class="card-icon">&#x1F504;</span>
+          <h3>Infinite Loops</h3>
+          <p>Your agent retries the same failed API call 10,000 times. No circuit breaker. No timeout. Just a growing bill.</p>
+        </div>
+        <div class="card pain-card fade-up delay-2">
+          <span class="card-icon">&#x1F513;</span>
+          <h3>Open Webhooks</h3>
+          <p>Default configs bind to 0.0.0.0. Your agent's callback endpoint is public. Anyone can POST to it.</p>
+        </div>
+        <div class="card pain-card fade-up delay-3">
+          <span class="card-icon">&#x1F4B8;</span>
+          <h3>$1,000 Surprise Bills</h3>
+          <p>No spend caps. No alerts. You find out when the credit card email arrives three days later.</p>
+        </div>
+        <div class="card pain-card fade-up delay-4">
+          <span class="card-icon">&#x1F47B;</span>
+          <h3>Shadow Agents</h3>
+          <p>Agents spawn sub-agents. Sub-agents spawn more. Nobody authorized it. Nobody is watching.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SOLUTION ====== -->
+  <section>
+    <div class="container">
+      <div class="section-label fade-up">The fix</div>
+      <h2 class="section-title fade-up">Governed agents, not caged ones</h2>
+      <div class="card-grid">
+        <div class="card solution-card fade-up delay-1">
+          <span class="card-icon">&#x1F6E1;</span>
+          <h3>Sandboxed Execution</h3>
+          <p>Every agent runs in an isolated container. No filesystem access. No network escape. Crash one, the rest keep running.</p>
+        </div>
+        <div class="card solution-card fade-up delay-2">
+          <span class="card-icon">&#x26A1;</span>
+          <h3>Token Circuit Breaker</h3>
+          <p>Set per-agent token budgets. Hit the limit? Agent pauses and alerts you. No silent overruns.</p>
+        </div>
+        <div class="card solution-card fade-up delay-3">
+          <span class="card-icon">&#x1F6D1;</span>
+          <h3>Heartbeat + Kill Switch</h3>
+          <p>Agents check in every 30 seconds. Miss a heartbeat? Auto-terminated. Or hit the kill switch yourself.</p>
+        </div>
+        <div class="card solution-card fade-up delay-4">
+          <span class="card-icon">&#x1F4CA;</span>
+          <h3>Spend Alerts & Audit Log</h3>
+          <p>Real-time cost tracking per agent. Threshold alerts via Telegram. Full audit trail of every action.</p>
+        </div>
+        <div class="card solution-card fade-up delay-5">
+          <span class="card-icon">&#x1F512;</span>
+          <h3>Authenticated Endpoints</h3>
+          <p>Every webhook, every callback, every API surface is HMAC-signed and IP-allowlisted. No open doors.</p>
+        </div>
+        <div class="card solution-card fade-up delay-6">
+          <span class="card-icon">&#x1F916;</span>
+          <h3>6 Agents, Zero Babysitting</h3>
+          <p>Run up to 6 governed agents concurrently. They work. You sleep. The guardrails don't.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== PRICING ====== -->
+  <section class="pricing-section">
+    <div class="container">
+      <div class="section-label fade-up">Pricing</div>
+      <h2 class="section-title fade-up">Pick your guardrail level.</h2>
+
+      <div class="pricing-grid">
+        <!-- Solo -->
+        <div class="pricing-card fade-up delay-1">
+          <div class="pricing-tier">Solo</div>
+          <div class="pricing-price">$50 <span>/mo</span></div>
+          <div class="pricing-deposit">+ $25 refundable deposit</div>
+          <ul class="pricing-features">
+            <li>6 governed agents</li>
+            <li>Sandboxed execution</li>
+            <li>Token circuit breaker</li>
+            <li>60s heartbeat monitoring</li>
+            <li>Kill switch</li>
+            <li>Telegram spend alerts</li>
+            <li>7-day audit log</li>
+            <li>HMAC endpoints</li>
+            <li>BYOK supported</li>
+          </ul>
+          <a href="https://buy.stripe.com/cNibJ377agMneal6b15os00" class="btn btn-primary" style="width:100%;text-align:center;margin-top:auto;">Start Solo &rarr;</a>
+        </div>
+
+        <!-- Team (Featured) -->
+        <div class="pricing-card featured fade-up delay-2">
+          <div class="pricing-badge">MOST POPULAR</div>
+          <div class="pricing-tier">Team</div>
+          <div class="pricing-price">$197 <span>/mo</span></div>
+          <div class="pricing-deposit">No deposit required</div>
+          <ul class="pricing-features">
+            <li><strong>25 governed agents</strong></li>
+            <li>Sandboxed execution</li>
+            <li>Token circuit breaker</li>
+            <li><strong>30s heartbeat monitoring</strong></li>
+            <li>Kill switch</li>
+            <li><strong>Telegram + SMS + Email alerts</strong></li>
+            <li><strong>30-day audit log</strong></li>
+            <li><strong>HMAC + IP allowlist</strong></li>
+            <li>BYOK supported</li>
+            <li><strong>3-level sub-agent spawning</strong></li>
+            <li><strong>Email support (24h)</strong></li>
+          </ul>
+          <a href="https://buy.stripe.com/00waEZezCfIjgitbvl5os01" class="btn btn-primary" style="width:100%;text-align:center;margin-top:auto;">Start Team &rarr;</a>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="pricing-card fade-up delay-3">
+          <div class="pricing-tier">Enterprise</div>
+          <div class="pricing-price">$497 <span>/mo</span></div>
+          <div class="pricing-deposit">No deposit required</div>
+          <ul class="pricing-features">
+            <li><strong>Unlimited agents</strong></li>
+            <li>Sandboxed execution</li>
+            <li>Token circuit breaker</li>
+            <li><strong>15s heartbeat monitoring</strong></li>
+            <li>Kill switch</li>
+            <li><strong>All channels + Slack/webhook</strong></li>
+            <li><strong>90-day audit log + export</strong></li>
+            <li><strong>HMAC + IP + mTLS</strong></li>
+            <li>BYOK supported</li>
+            <li><strong>Configurable sub-agent depth</strong></li>
+            <li><strong>Priority support + setup call</strong></li>
+            <li><strong>Custom governance policies</strong></li>
+          </ul>
+          <a href="https://buy.stripe.com/00geVf3UYfIjealbvl5os02" class="btn btn-primary" style="width:100%;text-align:center;margin-top:auto;">Start Enterprise &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== FAQ ====== -->
+  <section>
+    <div class="container">
+      <div class="section-label fade-up">FAQ</div>
+      <h2 class="section-title fade-up">Common questions</h2>
+      <div class="faq-list">
+        <div class="faq-item fade-up">
+          <div class="faq-q">Do I need my own hardware?</div>
+          <div class="faq-a">No. ArachneClaw runs on our infrastructure. Bring your API keys, we handle the compute, sandboxing, and monitoring. You can also connect your own hardware via Tailscale if you prefer.</div>
+        </div>
+        <div class="faq-item fade-up">
+          <div class="faq-q">What's the $25 deposit for?</div>
+          <div class="faq-a">It covers potential API overrun costs during your first billing cycle. Fully refundable after 30 days of normal usage. Think of it as a safety net for both of us.</div>
+        </div>
+        <div class="faq-item fade-up">
+          <div class="faq-q">Is this compatible with OpenClaw?</div>
+          <div class="faq-a">Yes. ArachneClaw is built on the same governance layer that powers OpenClaw's agent orchestration. If you're already in the ecosystem, your agents plug right in.</div>
+        </div>
+        <div class="faq-item fade-up">
+          <div class="faq-q">Can I bring my own API keys?</div>
+          <div class="faq-a">Absolutely. BYOK is the default. Your keys are encrypted at rest, never logged, and only injected into your sandboxed containers at runtime. We never see your API responses.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== FINAL CTA ====== -->
+  <section class="final-cta">
+    <div class="container">
+      <h2 class="fade-up">Your agent doesn't sleep.<br>Your API bill doesn't either.</h2>
+      <a href="https://buy.stripe.com/cNibJ377agMneal6b15os00" class="btn btn-primary fade-up">Start for $50/month &rarr;</a>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <footer>
+    <div class="container">&copy; 2026 Gentic AI</div>
+  </footer>
+
+  <!-- ====== JAVASCRIPT ====== -->
+  <script>
+    /* ==========================================
+       1. SCROLL REVEAL (IntersectionObserver)
+    ========================================== */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-up').forEach(el => revealObserver.observe(el));
+
+    /* ==========================================
+       2. TERMINAL TYPING ANIMATION
+    ========================================== */
+    const terminalEl = document.getElementById('terminal');
+    const terminalLines = terminalEl.querySelectorAll('.terminal-line');
+    let terminalPlayed = false;
+
+    const terminalObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !terminalPlayed) {
+          terminalPlayed = true;
+          terminalLines.forEach((line, i) => {
+            setTimeout(() => {
+              line.classList.add('visible');
+              // Error flash for red lines
+              if (line.querySelector('.t-err')) {
+                line.classList.add('error-flash');
+              }
+            }, i * 200);
+          });
+          terminalObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    terminalObserver.observe(terminalEl);
+
+    /* ==========================================
+       3. STATS COUNTER ANIMATION
+    ========================================== */
+    const statsEl = document.querySelector('.hero-stats');
+    let statsCounted = false;
+
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !statsCounted) {
+          statsCounted = true;
+          document.querySelectorAll('.stat-number').forEach(num => {
+            const target = parseInt(num.dataset.target);
+            const prefix = num.dataset.prefix || '';
+            const suffix = num.dataset.suffix || '';
+            const duration = 1200;
+            const start = performance.now();
+
+            function update(now) {
+              const elapsed = now - start;
+              const progress = Math.min(elapsed / duration, 1);
+              // ease-out cubic
+              const eased = 1 - Math.pow(1 - progress, 3);
+              const current = Math.round(target * eased);
+              num.textContent = prefix + current + suffix;
+              if (progress < 1) requestAnimationFrame(update);
+            }
+
+            requestAnimationFrame(update);
+          });
+          statsObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    statsObserver.observe(statsEl);
+
+    /* ==========================================
+       4. FAQ TOGGLE
+    ========================================== */
+    document.querySelectorAll('.faq-q').forEach(q => {
+      q.addEventListener('click', () => {
+        const item = q.parentElement;
+        item.classList.toggle('open');
+      });
+    });
+
+    /* ==========================================
+       5. CUSTOM CURSOR (desktop only)
+    ========================================== */
+    (function initCursor() {
+      // Only on desktop (pointer: fine)
+      if (!window.matchMedia('(pointer: fine)').matches) return;
+
+      const ring = document.getElementById('cursorRing');
+      const dot = document.getElementById('cursorDot');
+      const trailContainer = document.getElementById('cursorTrails');
+
+      // Show cursor elements, hide native cursor
+      ring.style.display = 'block';
+      dot.style.display = 'block';
+      document.body.style.cursor = 'none';
+
+      // Also hide cursor on all interactive elements
+      const style = document.createElement('style');
+      style.textContent = 'a, button, .faq-q, .card { cursor: none !important; }';
+      document.head.appendChild(style);
+
+      // Trail segments
+      const TRAIL_COUNT = 18;
+      const trails = [];
+      for (let i = 0; i < TRAIL_COUNT; i++) {
+        const t = document.createElement('div');
+        t.className = 'cursor-trail';
+        t.style.display = 'block';
+        t.style.opacity = (1 - i / TRAIL_COUNT) * 0.4;
+        t.style.width = t.style.height = Math.max(2, 4 - i * 0.12) + 'px';
+        trailContainer.appendChild(t);
+        trails.push({ el: t, x: 0, y: 0 });
+      }
+
+      let mouseX = 0, mouseY = 0;
+      let ringX = 0, ringY = 0;
+
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      // Hover detection
+      const interactiveSelector = 'a, button, .faq-q, .card, .btn';
+      document.addEventListener('mouseover', (e) => {
+        if (e.target.closest(interactiveSelector)) ring.classList.add('hover');
+      });
+      document.addEventListener('mouseout', (e) => {
+        if (e.target.closest(interactiveSelector)) ring.classList.remove('hover');
+      });
+
+      // Click feedback
+      document.addEventListener('mousedown', () => ring.classList.add('click'));
+      document.addEventListener('mouseup', () => ring.classList.remove('click'));
+
+      // Animation loop
+      function animate() {
+        // Ring follows with lerp 0.22
+        ringX += (mouseX - ringX) * 0.22;
+        ringY += (mouseY - ringY) * 0.22;
+        ring.style.left = ringX + 'px';
+        ring.style.top = ringY + 'px';
+
+        // Dot follows instantly
+        dot.style.left = mouseX + 'px';
+        dot.style.top = mouseY + 'px';
+
+        // Trail with lerp 0.28
+        let prevX = mouseX, prevY = mouseY;
+        for (let i = 0; i < trails.length; i++) {
+          const t = trails[i];
+          t.x += (prevX - t.x) * 0.28;
+          t.y += (prevY - t.y) * 0.28;
+          t.el.style.left = t.x + 'px';
+          t.el.style.top = t.y + 'px';
+          prevX = t.x;
+          prevY = t.y;
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    })();
+
+    /* ==========================================
+       6. SPIDER WEB CANVAS — Ported from SpiderWeb.tsx
+    ========================================== */
+    (function initSpiderWeb() {
+      var canvas = document.getElementById('spiderWebCanvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // --- Constants ---
+      var RADIAL_STRANDS = 18;
+      var CONCENTRIC_RINGS = 7;
+      var AMBIENT_SPIDER_COUNT = 3;
+      var AMBIENT_SPIDER_DURATION = 6000;
+      var TRAIL_LENGTH = 12;
+      var GLOW_RADIUS = 100;
+      var BREATHE_CYCLE = 4000;
+      var NODE_SIZE = 2.5;
+
+      // Color: ArachneClaw accent #00E5A0
+      var R = 0, G = 229, B = 160;
+
+      // --- State ---
+      var nodes = [];
+      var strandPairs = [];
+      var spiders = [];
+      var animFrame = 0;
+      var canvasW = 0, canvasH = 0;
+
+      function easeInOut(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      }
+
+      // --- Build Web ---
+      function buildWeb(w, h) {
+        var cx = w / 2;
+        var cy = h / 2;
+        var maxR = Math.min(w, h) * 0.45;
+        nodes = [{ x: cx, y: cy }];
+        var ringNodes = [[]]; // ring 0 = center placeholder
+
+        for (var ring = 1; ring <= CONCENTRIC_RINGS; ring++) {
+          var r = (ring / CONCENTRIC_RINGS) * maxR;
+          var ringGroup = [];
+          for (var strand = 0; strand < RADIAL_STRANDS; strand++) {
+            var angle = (strand / RADIAL_STRANDS) * Math.PI * 2 - Math.PI / 2;
+            var node = { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r };
+            nodes.push(node);
+            ringGroup.push(node);
+          }
+          ringNodes.push(ringGroup);
+        }
+
+        // Build strand pairs (radial segments + ring segments)
+        strandPairs = [];
+        for (var strand = 0; strand < RADIAL_STRANDS; strand++) {
+          for (var ring = 0; ring < CONCENTRIC_RINGS; ring++) {
+            var fromNode = ring === 0 ? nodes[0] : ringNodes[ring][strand];
+            var toNode = ringNodes[ring + 1][strand];
+            strandPairs.push([fromNode, toNode]);
+          }
+        }
+        for (var ring = 1; ring <= CONCENTRIC_RINGS; ring++) {
+          for (var strand = 0; strand < RADIAL_STRANDS; strand++) {
+            var next = (strand + 1) % RADIAL_STRANDS;
+            strandPairs.push([ringNodes[ring][strand], ringNodes[ring][next]]);
+          }
+        }
+      }
+
+      // --- Get spider position ---
+      function getSpiderPos(spider) {
+        var eased = easeInOut(Math.min(spider.progress, 1));
+        return {
+          x: spider.startNode.x + (spider.endNode.x - spider.startNode.x) * eased,
+          y: spider.startNode.y + (spider.endNode.y - spider.startNode.y) * eased
+        };
+      }
+
+      // --- Draw Web ---
+      function drawWeb(breatheAlpha) {
+        var cx = canvasW / 2;
+        var cy = canvasH / 2;
+        var maxR = Math.min(canvasW, canvasH) * 0.45;
+        var baseAlpha = 0.06 + breatheAlpha * 0.06;
+
+        // Glow zones from spiders
+        var glowPoints = [];
+        for (var s = 0; s < spiders.length; s++) {
+          glowPoints.push(getSpiderPos(spiders[s]));
+        }
+
+        function drawLine(x1, y1, x2, y2) {
+          var boost = 0;
+          var midX = (x1 + x2) / 2;
+          var midY = (y1 + y2) / 2;
+          for (var g = 0; g < glowPoints.length; g++) {
+            var gp = glowPoints[g];
+            var dist = Math.hypot(midX - gp.x, midY - gp.y);
+            if (dist < GLOW_RADIUS * 1.5) {
+              boost = Math.max(boost, 1 - dist / (GLOW_RADIUS * 1.5));
+            }
+          }
+          var alpha = baseAlpha + boost * 0.25;
+          ctx.strokeStyle = 'rgba(' + R + ',' + G + ',' + B + ',' + alpha + ')';
+          ctx.lineWidth = 0.6 + boost * 1.5;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        }
+
+        // Radial strands
+        for (var strand = 0; strand < RADIAL_STRANDS; strand++) {
+          var angle = (strand / RADIAL_STRANDS) * Math.PI * 2 - Math.PI / 2;
+          drawLine(cx, cy, cx + Math.cos(angle) * maxR, cy + Math.sin(angle) * maxR);
+        }
+
+        // Concentric rings
+        for (var ring = 1; ring <= CONCENTRIC_RINGS; ring++) {
+          var r = (ring / CONCENTRIC_RINGS) * maxR;
+          for (var strand = 0; strand < RADIAL_STRANDS; strand++) {
+            var a1 = (strand / RADIAL_STRANDS) * Math.PI * 2 - Math.PI / 2;
+            var a2 = ((strand + 1) / RADIAL_STRANDS) * Math.PI * 2 - Math.PI / 2;
+            drawLine(cx + Math.cos(a1) * r, cy + Math.sin(a1) * r, cx + Math.cos(a2) * r, cy + Math.sin(a2) * r);
+          }
+        }
+
+        // Node dots
+        for (var n = 0; n < nodes.length; n++) {
+          var node = nodes[n];
+          var nodeBrightness = baseAlpha * 2.5;
+          for (var g = 0; g < glowPoints.length; g++) {
+            var gp = glowPoints[g];
+            var dist = Math.hypot(node.x - gp.x, node.y - gp.y);
+            if (dist < GLOW_RADIUS) {
+              nodeBrightness = Math.max(nodeBrightness, 0.6 * (1 - dist / GLOW_RADIUS));
+            }
+          }
+          ctx.fillStyle = 'rgba(' + R + ',' + G + ',' + B + ',' + nodeBrightness + ')';
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, NODE_SIZE, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // --- Draw Spider ---
+      function drawSpider(spider) {
+        var pos = getSpiderPos(spider);
+        var x = pos.x, y = pos.y;
+
+        // Update trail
+        if (!spider.trail) spider.trail = [];
+        spider.trail.push({ x: x, y: y });
+        if (spider.trail.length > TRAIL_LENGTH) spider.trail.shift();
+
+        // Draw trail
+        for (var i = 0; i < spider.trail.length; i++) {
+          var tp = spider.trail[i];
+          var trailAlpha = (i / spider.trail.length) * 0.12;
+          ctx.fillStyle = 'rgba(' + R + ',' + G + ',' + B + ',' + trailAlpha + ')';
+          ctx.beginPath();
+          ctx.arc(tp.x, tp.y, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Glow halo
+        var glowSize = GLOW_RADIUS * 0.5;
+        var gradient = ctx.createRadialGradient(x, y, 0, x, y, glowSize);
+        gradient.addColorStop(0, 'rgba(' + R + ',' + G + ',' + B + ',0.06)');
+        gradient.addColorStop(0.4, 'rgba(' + R + ',' + G + ',' + B + ',0.024)');
+        gradient.addColorStop(1, 'rgba(' + R + ',' + G + ',' + B + ',0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(x, y, glowSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Body
+        ctx.fillStyle = 'rgba(' + R + ',' + G + ',' + B + ',0.5)';
+        ctx.beginPath();
+        ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Legs (8 with wobble)
+        var now = performance.now();
+        ctx.strokeStyle = 'rgba(' + R + ',' + G + ',' + B + ',0.35)';
+        ctx.lineWidth = 0.6;
+        for (var i = 0; i < 8; i++) {
+          var legAngle = (i / 8) * Math.PI * 2;
+          var wobble = Math.sin(now * 0.012 + i * 1.2) * 3;
+          var len = 5 + wobble;
+          var mx = x + Math.cos(legAngle) * (len * 0.5);
+          var my = y + Math.sin(legAngle) * (len * 0.5) - 1.5;
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.quadraticCurveTo(mx, my, x + Math.cos(legAngle) * len, y + Math.sin(legAngle) * len);
+          ctx.stroke();
+        }
+      }
+
+      // --- Resize ---
+      function resize() {
+        var dpr = window.devicePixelRatio || 1;
+        var rect = canvas.getBoundingClientRect();
+        canvasW = rect.width;
+        canvasH = rect.height;
+        canvas.width = canvasW * dpr;
+        canvas.height = canvasH * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        buildWeb(canvasW, canvasH);
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+
+      // --- Seed Ambient Spiders ---
+      function seedSpiders() {
+        if (strandPairs.length === 0) return;
+        for (var i = 0; i < AMBIENT_SPIDER_COUNT; i++) {
+          var pair = strandPairs[Math.floor(Math.random() * strandPairs.length)];
+          var reverse = Math.random() > 0.5;
+          spiders.push({
+            startNode: reverse ? pair[1] : pair[0],
+            endNode: reverse ? pair[0] : pair[1],
+            progress: Math.random(),
+            startTime: performance.now() - Math.random() * AMBIENT_SPIDER_DURATION,
+            duration: AMBIENT_SPIDER_DURATION + Math.random() * 2000,
+            trail: []
+          });
+        }
+      }
+
+      seedSpiders();
+
+      // --- Animation Loop ---
+      function animate() {
+        var now = performance.now();
+        ctx.clearRect(0, 0, canvasW, canvasH);
+
+        // Breathe cycle
+        var breathe = (Math.sin((now / BREATHE_CYCLE) * Math.PI * 2) + 1) / 2;
+
+        // Draw web
+        drawWeb(breathe);
+
+        // Update & draw spiders
+        for (var i = 0; i < spiders.length; i++) {
+          var spider = spiders[i];
+          spider.progress = Math.min((now - spider.startTime) / spider.duration, 1);
+
+          if (spider.progress >= 1) {
+            // Pick new random path
+            var pair = strandPairs[Math.floor(Math.random() * strandPairs.length)];
+            var reverse = Math.random() > 0.5;
+            spider.startNode = reverse ? pair[1] : pair[0];
+            spider.endNode = reverse ? pair[0] : pair[1];
+            spider.progress = 0;
+            spider.startTime = now;
+            spider.duration = AMBIENT_SPIDER_DURATION + Math.random() * 2000;
+            spider.trail = [];
+          }
+
+          drawSpider(spider);
+        }
+
+        animFrame = requestAnimationFrame(animate);
+      }
+
+      animFrame = requestAnimationFrame(animate);
+    })();
+  </script>
+</body>
+</html>

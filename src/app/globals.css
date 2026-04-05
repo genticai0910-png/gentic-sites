@@ -84,8 +84,17 @@ body::before {
   background: #080E1E;
 }
 
+/* ── Animated text gradient (dark sections) ──── */
+@keyframes gradient-text-flow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .section-dark .text-gradient {
-  background: linear-gradient(135deg, #F0F4FC 0%, #60A5FA 100%);
+  background: linear-gradient(135deg, #F0F4FC 0%, #60A5FA 35%, #F0F4FC 65%, #60A5FA 100%);
+  background-size: 300% 300%;
+  animation: gradient-text-flow 8s ease-in-out infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -181,8 +190,26 @@ body::before {
   pointer-events: none;
 }
 
+@property --gradient-angle {
+  syntax: '<angle>';
+  initial-value: 135deg;
+  inherits: false;
+}
+
+@keyframes gradient-spin {
+  0%   { --gradient-angle: 0deg; }
+  100% { --gradient-angle: 360deg; }
+}
+
 .gradient-border:hover::before {
   opacity: 1;
+  background: linear-gradient(
+    var(--gradient-angle),
+    rgba(59, 130, 246, 0.5),
+    rgba(37, 99, 235, 0.08),
+    rgba(96, 165, 250, 0.5)
+  );
+  animation: gradient-spin 4s linear infinite;
 }
 
 /* ── Shimmer sweep ───────────────────────────── */
@@ -278,18 +305,92 @@ body::before {
   background-clip: text;
 }
 
-/* ── Mesh gradient backgrounds ─────────────────── */
+/* ── Animated mesh gradient backgrounds ───────── */
+@keyframes mesh-drift {
+  0%   { background-position: 0% 50%, 100% 50%; }
+  50%  { background-position: 100% 30%, 0% 70%; }
+  100% { background-position: 0% 50%, 100% 50%; }
+}
+
 .mesh-bg {
   background:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(37, 99, 235, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(37, 99, 235, 0.04) 0%, transparent 50%),
     var(--navy-deep);
+  background-size: 200% 200%, 200% 200%, 100% 100%;
+  animation: mesh-drift 20s ease-in-out infinite;
 }
 
 .mesh-bg-card {
   background:
     radial-gradient(ellipse 100% 100% at 0% 0%, rgba(59, 130, 246, 0.03) 0%, transparent 60%),
     var(--navy-card);
+}
+
+/* ── Animated aurora for dark sections ──────────── */
+@keyframes aurora-shift {
+  0%   { background-position: 0% 50%, 50% 100%, 100% 0%; }
+  33%  { background-position: 50% 0%, 100% 50%, 0% 100%; }
+  66%  { background-position: 100% 100%, 0% 0%, 50% 50%; }
+  100% { background-position: 0% 50%, 50% 100%, 100% 0%; }
+}
+
+.aurora-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 30% 20%, rgba(59, 130, 246, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 70% 60%, rgba(96, 165, 250, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 30% at 50% 80%, rgba(37, 99, 235, 0.06) 0%, transparent 60%);
+  background-size: 200% 200%, 200% 200%, 200% 200%;
+  animation: aurora-shift 25s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── Layered dot grid with depth (light sections) ── */
+@keyframes grid-pulse-near {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes grid-pulse-mid {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes grid-pulse-far {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.25; }
+}
+
+.dot-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Near layer — larger, brighter dots */
+.dot-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(59, 130, 246, 0.12) 1.2px, transparent 1.2px);
+  background-size: 48px 48px;
+  animation: grid-pulse-near 7s ease-in-out infinite;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 70%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 70%);
+}
+
+/* Mid layer — medium dots */
+.dot-grid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(59, 130, 246, 0.07) 0.8px, transparent 0.8px);
+  background-size: 28px 28px;
+  background-position: 14px 14px;
+  animation: grid-pulse-mid 10s ease-in-out infinite;
+  animation-delay: -3s;
 }
 
 /* ── Premium button ──────────────────────────── */
@@ -329,6 +430,30 @@ body::before {
 
 .btn-primary:hover::before {
   opacity: 1;
+}
+
+/* ── Button shine sweep ──────────────────────── */
+@keyframes btn-shine {
+  0%, 100% { left: -100%; }
+  35%, 65% { left: 200%; }
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  animation: btn-shine 5s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* ── Card hover ────────────────────────────────── */
@@ -408,6 +533,53 @@ body::before {
   );
 }
 
+/* ── Glow travel line ────────────────────────── */
+@keyframes glow-travel {
+  0%   { top: -15%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 95%; opacity: 0; }
+}
+
+.glow-line {
+  position: relative;
+}
+
+.glow-line::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -15%;
+  width: 3px;
+  height: 12%;
+  background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.6) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: glow-travel 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── Eyebrow badge pulse ─────────────────────── */
+@keyframes eyebrow-glow {
+  0%, 100% { text-shadow: 0 0 0 transparent; }
+  50% { text-shadow: 0 0 12px rgba(59, 130, 246, 0.3); }
+}
+
+.eyebrow-pulse {
+  animation: eyebrow-glow 4s ease-in-out infinite;
+}
+
+/* ── Scroll progress bar ─────────────────────── */
+.scroll-progress {
+  height: 2px;
+  background: linear-gradient(90deg, var(--blue-electric), var(--blue-glow), var(--blue-accent));
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4),
+              0 0 24px rgba(59, 130, 246, 0.12);
+  transition: width 0.08s linear;
+  transform-origin: left;
+}
+
 /* ── Divider glow ─────────────────────────────── */
 .divider-glow {
   height: 1px;
@@ -446,7 +618,19 @@ body::before {
   }
   .shimmer::after,
   .floating-orb,
-  .floating-orb-delayed {
+  .floating-orb-delayed,
+  .aurora-bg,
+  .dot-grid::before,
+  .dot-grid::after,
+  .mesh-bg,
+  .ambient-glow,
+  .btn-primary::after,
+  .glow-line::after,
+  .eyebrow-pulse,
+  .section-dark .text-gradient {
+    animation: none;
+  }
+  .gradient-border:hover::before {
     animation: none;
   }
 }

@@ -1,0 +1,10 @@
+{
+  "timestamp": "20260405_062335",
+  "total_attacks": 0,
+  "successful_attacks": 0,
+  "attack_success_rate": 0,
+  "by_category": {},
+  "critical_vulnerabilities": [],
+  "results_file": "../output/pyrit/mlx/pyrit_results_20260405_062335.jsonl",
+  "failures_file": "../output/pyrit/mlx/adversarial_failures_20260405_062335.jsonl"
+}
